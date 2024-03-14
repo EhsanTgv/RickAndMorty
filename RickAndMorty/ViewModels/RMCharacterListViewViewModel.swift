@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CharacterListViewViewModel: NSObject {
+final class RMCharacterListViewViewModel: NSObject {
     
     func fetchCharacters() {
         RMService.shared.execute(.listCharactersRequest, expecting: RMGetAllCharactersResponse.self) { result in
@@ -22,15 +22,20 @@ final class CharacterListViewViewModel: NSObject {
     }
 }
 
-extension CharacterListViewViewModel: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension RMCharacterListViewViewModel: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView:UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 20
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let call = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        call.backgroundColor = .systemGreen
-        return call
+       guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterCollectionViewCell.cellIdentifier, for: indexPath)
+                as? RMCharacterCollectionViewCell else{
+           fatalError("Unsupported cell")
+       }
+        let viewModel = RMCharacterCollectionViewCellViewModel(characterName: "Sahand", characterStatus: .alive, characterImageUrl: URL(string: "https://e1.pngegg.com/pngimages/248/746/png-clipart-rick-and-morty-hq-resource-rick-and-morty.png"))
+        
+        cell.configure(with: viewModel)
+        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
